@@ -1,0 +1,50 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.BaomingMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加项目报名记录 -->
+	<insert id="addBaoming" parameterType="baoming">
+		insert into t_baoming(projectObj,companyObj,baomingTime) values 
+		(#{projectObj.projectId},#{companyObj.companyUserName},#{baomingTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询项目报名记录 -->
+	<select id="queryBaoming" resultMap="baomingMap" >
+		select t_baoming.* from t_baoming,t_company,t_project ${where} and t_baoming.projectObj = t_project.projectId and t_baoming.companyObj = t_company.companyUserName limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="baomingMap" type="baoming">
+        <id property="baomingId" column="baomingId" />
+        <association property="projectObj" column="projectObj" select="com.chengxusheji.mapper.ProjectMapper.getProject" />
+        <association property="companyObj" column="companyObj" select="com.chengxusheji.mapper.CompanyMapper.getCompany" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有项目报名记录 -->
+	<select id="queryBaomingList" resultMap="baomingMap" >
+		select t_baoming.* from t_baoming,t_company,t_project ${where} and t_baoming.projectObj = t_project.projectId and t_baoming.companyObj = t_company.companyUserName
+	</select>
+
+    <!-- 按照查询条件的项目报名记录数 -->
+	<select id="queryBaomingCount" resultType="int">
+		select count(*) from t_baoming,t_company,t_project ${where} and t_baoming.projectObj = t_project.projectId and t_baoming.companyObj = t_company.companyUserName
+	</select>
+
+	<!-- 根据主键查询某个项目报名记录 -->
+	<select id="getBaoming" parameterType="int" resultMap="baomingMap">
+		select * from t_baoming where t_baoming.baomingId = #{baomingId}
+	</select>
+
+	<!-- 更新项目报名记录 -->
+	<update id="updateBaoming" parameterType="baoming">
+		update t_baoming set projectObj=#{projectObj.projectId},companyObj=#{companyObj.companyUserName},baomingTime=#{baomingTime} where baomingId = #{baomingId}
+	</update>
+
+	<!-- 删除项目报名记录 -->
+	<delete id="deleteBaoming" parameterType="int">
+		delete from t_baoming where baomingId=#{baomingId}
+	</delete>
+
+</mapper>

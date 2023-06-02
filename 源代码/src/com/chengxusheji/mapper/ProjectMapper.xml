@@ -1,0 +1,50 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ProjectMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加招商项目记录 -->
+	<insert id="addProject" parameterType="project">
+		insert into t_project(hangyeObj,projectName,projectPhoto,zsDate,xmAddress,zsAddress,tzed,lxfs,projectDesc,companyObj,shzt,shhf,addTime) values 
+		(#{hangyeObj.hangyeId},#{projectName},#{projectPhoto},#{zsDate},#{xmAddress},#{zsAddress},#{tzed},#{lxfs},#{projectDesc},#{companyObj.companyUserName},#{shzt},#{shhf},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询招商项目记录 -->
+	<select id="queryProject" resultMap="projectMap" >
+		select t_project.* from t_project,t_company,t_hangye ${where} and t_project.hangyeObj = t_hangye.hangyeId and t_project.companyObj = t_company.companyUserName limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="projectMap" type="project">
+        <id property="projectId" column="projectId" />
+        <association property="hangyeObj" column="hangyeObj" select="com.chengxusheji.mapper.HangyeMapper.getHangye" />
+        <association property="companyObj" column="companyObj" select="com.chengxusheji.mapper.CompanyMapper.getCompany" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有招商项目记录 -->
+	<select id="queryProjectList" resultMap="projectMap" >
+		select t_project.* from t_project,t_company,t_hangye ${where} and t_project.hangyeObj = t_hangye.hangyeId and t_project.companyObj = t_company.companyUserName
+	</select>
+
+    <!-- 按照查询条件的招商项目记录数 -->
+	<select id="queryProjectCount" resultType="int">
+		select count(*) from t_project,t_company,t_hangye ${where} and t_project.hangyeObj = t_hangye.hangyeId and t_project.companyObj = t_company.companyUserName
+	</select>
+
+	<!-- 根据主键查询某个招商项目记录 -->
+	<select id="getProject" parameterType="int" resultMap="projectMap">
+		select * from t_project where t_project.projectId = #{projectId}
+	</select>
+
+	<!-- 更新招商项目记录 -->
+	<update id="updateProject" parameterType="project">
+		update t_project set hangyeObj=#{hangyeObj.hangyeId},projectName=#{projectName},projectPhoto=#{projectPhoto},zsDate=#{zsDate},xmAddress=#{xmAddress},zsAddress=#{zsAddress},tzed=#{tzed},lxfs=#{lxfs},projectDesc=#{projectDesc},companyObj=#{companyObj.companyUserName},shzt=#{shzt},shhf=#{shhf},addTime=#{addTime} where projectId = #{projectId}
+	</update>
+
+	<!-- 删除招商项目记录 -->
+	<delete id="deleteProject" parameterType="int">
+		delete from t_project where projectId=#{projectId}
+	</delete>
+
+</mapper>

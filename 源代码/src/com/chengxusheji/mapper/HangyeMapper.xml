@@ -1,0 +1,48 @@
+﻿<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.HangyeMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加行业记录 -->
+	<insert id="addHangye" parameterType="hangye">
+		insert into t_hangye(hangyeName) values 
+		(#{hangyeName})
+	</insert>
+
+	<!-- 按照查询条件分页查询行业记录 -->
+	<select id="queryHangye" resultMap="hangyeMap" >
+		select t_hangye.* from t_hangye ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="hangyeMap" type="hangye">
+        <id property="hangyeId" column="hangyeId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有行业记录 -->
+	<select id="queryHangyeList" resultMap="hangyeMap" >
+		select t_hangye.* from t_hangye ${where}
+	</select>
+
+    <!-- 按照查询条件的行业记录数 -->
+	<select id="queryHangyeCount" resultType="int">
+		select count(*) from t_hangye ${where}
+	</select>
+
+	<!-- 根据主键查询某个行业记录 -->
+	<select id="getHangye" parameterType="int" resultMap="hangyeMap">
+		select * from t_hangye where t_hangye.hangyeId = #{hangyeId}
+	</select>
+
+	<!-- 更新行业记录 -->
+	<update id="updateHangye" parameterType="hangye">
+		update t_hangye set hangyeName=#{hangyeName} where hangyeId = #{hangyeId}
+	</update>
+
+	<!-- 删除行业记录 -->
+	<delete id="deleteHangye" parameterType="int">
+		delete from t_hangye where hangyeId=#{hangyeId}
+	</delete>
+
+</mapper>
